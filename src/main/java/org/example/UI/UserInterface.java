@@ -31,9 +31,15 @@ public class UserInterface {
                 String user = scanner.nextLine();
                 System.out.println("Desired password: ");
                 String pass = scanner.nextLine();
+                System.out.println("Enter email address: ");
+                String email = scanner.nextLine();
+                while(!email.contains("@")){
+                    System.out.println("Enter a valid email address: ");
+                     email = scanner.nextLine();
+                }
                 System.out.println("Starting balance: ");
-                int balance = Integer.parseInt(scanner.nextLine());
-                person = new Person(user, pass);
+                double balance = Double.parseDouble(scanner.nextLine());
+                person = new Person(user, pass, email);
                 try {
                     person.addPerson(person, balance);
                 } catch (SQLException e) {
@@ -41,11 +47,15 @@ public class UserInterface {
                 }
 
             } else if (input == 2) {
-                System.out.println("Username:");
-                String user = scanner.nextLine();
+                System.out.println("Email: ");
+                String email = scanner.nextLine();
+                while(!email.contains("@")){
+                    System.out.println("Email: ");
+                    email = scanner.nextLine();
+                }
                 System.out.println("Password: ");
                 String pass = scanner.nextLine();
-                person = new Person(user, pass);
+                person = person.getPersonFromEmail(email, pass);
                 if (bank.authUser(person)) {
                     bankDetails(scanner, person);
                 } else {
@@ -65,21 +75,21 @@ public class UserInterface {
             int input = Integer.parseInt(scanner.nextLine());
             if (input == 1) {
                 System.out.println("How much to deposit? ");
-                bank.deposit(this.person, Integer.parseInt(scanner.nextLine()));
-                //saveToFile("logins.txt");
+                bank.deposit(this.person, Double.parseDouble(scanner.nextLine()));
+
             } else if (input == 2) {
                 System.out.println("How much to withdrawal? ");
-                int num = Integer.parseInt(scanner.nextLine());
+                double num = Double.parseDouble(scanner.nextLine());
                 bank.withdrawal(this.person, num);
-                // saveToFile("logins.txt");
+
             } else if (input == 3) {
                 System.out.println("Current balance: $" + bank.getBalance(this.person));
             } else if (input == 4) {
-                System.out.println("Name of person to transfer to?");
-                String transferName = scanner.nextLine();
+                System.out.println("Email of person to transfer to?");
+                String transferEmail = scanner.nextLine();
                 System.out.println("Amount to transfer?");
-                int transferAmount = Integer.parseInt(scanner.nextLine());
-                Person transferee = new Person(transferName, "");
+                double transferAmount = Double.parseDouble(scanner.nextLine());
+                Person transferee = new Person("", "",transferEmail);
                 bank.transfer(person, transferee, transferAmount);
             } else if (input == 5) {
                 start(scanner);

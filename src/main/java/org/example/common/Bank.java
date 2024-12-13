@@ -23,12 +23,12 @@ public class Bank {
     }
 
 
-    public void deposit(Person person, int num) {
-        int bal = 0;
+    public void deposit(Person person, double num) {
+        double bal = 0;
 
         try {
-            PreparedStatement ps = con.prepareStatement("SELECT balance FROM \"Work\" WHERE username=?");
-            ps.setString(1, person.getUser());
+            PreparedStatement ps = con.prepareStatement("SELECT balance FROM \"Work\" WHERE email=?");
+            ps.setString(1, person.getEmail());
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 bal = rs.getInt("balance");
@@ -38,9 +38,9 @@ public class Bank {
             throw new RuntimeException(e);
         }
         try {
-            PreparedStatement ps = con.prepareStatement("UPDATE \"Work\" SET balance=? WHERE username=?");
-            ps.setInt(1, bal);
-            ps.setString(2, person.getUser());
+            PreparedStatement ps = con.prepareStatement("UPDATE \"Work\" SET balance=? WHERE email=?");
+            ps.setDouble(1, bal);
+            ps.setString(2, person.getEmail());
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -49,15 +49,15 @@ public class Bank {
 
     }
 
-    public int getBalance(Person person) {
+    public double getBalance(Person person) {
 
         {
             try {
-                PreparedStatement ps = con.prepareStatement("SELECT balance FROM \"Work\" WHERE username=?");
-                ps.setString(1, person.getUser());
+                PreparedStatement ps = con.prepareStatement("SELECT balance FROM \"Work\" WHERE email=?");
+                ps.setString(1, person.getEmail());
                 ResultSet rs = ps.executeQuery();
                 if (rs.next()) {
-                    return rs.getInt(1);
+                    return rs.getDouble("balance");
                 } else {
                     return 0;
                 }
@@ -69,15 +69,15 @@ public class Bank {
 
     }
 
-    public void withdrawal(Person person, int num) {
-        int bal = 0;
+    public void withdrawal(Person person, double num) {
+        double bal = 0;
         {
             try {
-                PreparedStatement ps = con.prepareStatement("SELECT balance FROM \"Work\" WHERE username=?");
-                ps.setString(1, person.getUser());
+                PreparedStatement ps = con.prepareStatement("SELECT balance FROM \"Work\" WHERE email=?");
+                ps.setString(1, person.getEmail());
                 ResultSet rs = ps.executeQuery();
                 if (rs.next()) {
-                    bal = rs.getInt("balance");
+                    bal = rs.getDouble("balance");
                 } else {
                     System.out.println("No user found!");
                     return;
@@ -86,9 +86,9 @@ public class Bank {
                     System.out.println("Not enough funds!");
                 } else {
                     bal -= num;
-                    ps = con.prepareStatement("UPDATE \"Work\" SET balance=? WHERE username=?");
-                    ps.setInt(1, bal);
-                    ps.setString(2, person.getUser());
+                    ps = con.prepareStatement("UPDATE \"Work\" SET balance=? WHERE email=?");
+                    ps.setDouble(1, bal);
+                    ps.setString(2, person.getEmail());
                     ps.executeUpdate();
                     System.out.println("Withdrawl successful. New balance: $" + bal);
                 }
@@ -103,8 +103,8 @@ public class Bank {
     public boolean authUser(Person person) {
         {
             try {
-                PreparedStatement st = con.prepareStatement("SELECT * FROM \"Work\" WHERE username=?");
-                st.setString(1, person.getUser());
+                PreparedStatement st = con.prepareStatement("SELECT * FROM \"Work\" WHERE email=?");
+                st.setString(1, person.getEmail());
                 ResultSet rs = st.executeQuery();
                 if (rs.next()) {
                     if (rs.getString("password").equals(person.getPass())) {
@@ -122,38 +122,38 @@ public class Bank {
         return false;
     }
 
-    public void transfer(Person from, Person to, int balance) {
+    public void transfer(Person from, Person to, double balance) {
         {
             try {
-                PreparedStatement st = con.prepareStatement("SELECT balance FROM \"Work\" WHERE username=?");
-                st.setString(1, from.getUser());
+                PreparedStatement st = con.prepareStatement("SELECT balance FROM \"Work\" WHERE email=?");
+                st.setString(1, from.getEmail());
                 ResultSet rs = st.executeQuery();
                 if (rs.next()) {
-                    int sourceBal = rs.getInt("balance");
+                    double sourceBal = rs.getDouble("balance");
                     if (sourceBal > balance) {
                         sourceBal -= balance;
-                        st = con.prepareStatement("UPDATE \"Work\" SET balance=? WHERE username=?");
-                        st.setInt(1, sourceBal);
-                        st.setString(2, from.getUser());
+                        st = con.prepareStatement("UPDATE \"Work\" SET balance=? WHERE email=?");
+                        st.setDouble(1, sourceBal);
+                        st.setString(2, from.getEmail());
                     } else {
                         System.out.println("Not enough funds.");
                         return;
                     }
-                    PreparedStatement stTwo = con.prepareStatement("SELECT balance FROM \"Work\" WHERE username=?");
-                    stTwo.setString(1, to.getUser());
+                    PreparedStatement stTwo = con.prepareStatement("SELECT balance FROM \"Work\" WHERE email=?");
+                    stTwo.setString(1, to.getEmail());
                     rs = stTwo.executeQuery();
                     if (rs.next()) {
-                        int toBalance = rs.getInt("balance");
+                        double toBalance = rs.getDouble("balance");
                         toBalance += balance;
-                        stTwo = con.prepareStatement("UPDATE \"Work\" SET balance=? WHERE username=?");
-                        stTwo.setInt(1, toBalance);
-                        stTwo.setString(2, to.getUser());
+                        stTwo = con.prepareStatement("UPDATE \"Work\" SET balance=? WHERE email=?");
+                        stTwo.setDouble(1, toBalance);
+                        stTwo.setString(2, to.getEmail());
                         stTwo.executeUpdate();
                         st.executeUpdate();
                         st.close();
                         stTwo.close();
                         rs.close();
-                        System.out.println("Transfer to: " + to.getUser() + " successful!");
+                        System.out.println("Transfer to: " + to.getEmail() + " successful!");
                     } else {
                         System.out.println("Unable to locate recipient.");
                         return;
