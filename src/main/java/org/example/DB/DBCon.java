@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class DBCon {
     private final String user = "postgres";
-    private final String pass = "Seanmalto2399";
+    private final String pass = "admin";
     private final String url = "jdbc:postgresql://localhost:5432/TestDB";
 
     public DBCon() {

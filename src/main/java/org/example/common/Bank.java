@@ -6,7 +6,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 
 public class Bank {
     private final DBCon DB = new DBCon();
@@ -136,29 +135,29 @@ public class Bank {
                         st = con.prepareStatement("UPDATE \"Work\" SET balance=? WHERE username=?");
                         st.setInt(1, sourceBal);
                         st.setString(2, from.getUser());
-                        st.executeUpdate();
-                        st.close();
                     } else {
                         System.out.println("Not enough funds.");
                         return;
                     }
-                    st = con.prepareStatement("SELECT balance FROM \"Work\" WHERE username=?");
-                    st.setString(1, to.getUser());
-                    rs = st.executeQuery();
+                    PreparedStatement stTwo = con.prepareStatement("SELECT balance FROM \"Work\" WHERE username=?");
+                    stTwo.setString(1, to.getUser());
+                    rs = stTwo.executeQuery();
                     if (rs.next()) {
                         int toBalance = rs.getInt("balance");
                         toBalance += balance;
-                        st = con.prepareStatement("UPDATE \"Work\" SET balance=? WHERE username=?");
-                        st.setInt(1, toBalance);
-                        st.setString(2, to.getUser());
+                        stTwo = con.prepareStatement("UPDATE \"Work\" SET balance=? WHERE username=?");
+                        stTwo.setInt(1, toBalance);
+                        stTwo.setString(2, to.getUser());
+                        stTwo.executeUpdate();
                         st.executeUpdate();
                         st.close();
+                        stTwo.close();
                         rs.close();
                         System.out.println("Transfer to: " + to.getUser() + " successful!");
+                    } else {
+                        System.out.println("Unable to locate recipient.");
+                        return;
                     }
-                } else {
-                    System.out.println("Unable to locate recipient.");
-                    return;
                 }
 
             } catch (SQLException e) {
