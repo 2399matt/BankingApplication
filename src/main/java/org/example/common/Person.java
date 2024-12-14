@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Person {
     private String username;
@@ -44,7 +45,7 @@ public class Person {
                     "INSERT INTO \"Work\"(\"ID\",username,password,balance,email)VALUES(DEFAULT,?,?,DEFAULT,?)");
             ps.setString(1, person.username);
             ps.setString(2, person.password);
-            ps.setString(3,person.email);
+            ps.setString(3, person.email);
             ps.executeUpdate();
             bank = new Bank();
             bank.deposit(person, balance);
@@ -60,63 +61,58 @@ public class Person {
         return this.username;
     }
 
-    public Person getPersonFromEmail(String email, String password){
+    public Person getPersonFromEmail(String email, String password) {
         {
-            try{
+            try {
                 PreparedStatement st = con.prepareStatement("SELECT * FROM \"Work\" WHERE email=?");
-                st.setString(1,email);
+                st.setString(1, email);
                 ResultSet rs = st.executeQuery();
-                if(rs.next()){
+                if (rs.next()) {
                     String user = rs.getString("username");
                     String pass = rs.getString("password");
-                    if(pass.equals(password))
-                        return new Person(user,pass,email);
+                    if (pass.equals(password))
+                        return new Person(user, pass, email);
                     else
                         return new Person();
-                }else{
+                } else {
                     return new Person();
                 }
-            }catch(SQLException e){
+            } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         }
 
     }
 
+    public void setPass(String pass) {
+        this.password = pass;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setUser(String user) {
+        this.username = user;
+    }
+
     public String getPass() {
         return this.password;
     }
 
-    public String getEmail(){return this.email;}
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((username == null) ? 0 : username.hashCode());
-        result = prime * result + ((password == null) ? 0 : password.hashCode());
-        return result;
+    public String getEmail() {
+        return this.email;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Person other = (Person) obj;
-        if (username == null) {
-            if (other.username != null)
-                return false;
-        } else if (!username.equals(other.username))
-            return false;
-        if (password == null) {
-            if (other.password != null)
-                return false;
-        } else if (!password.equals(other.password))
-            return false;
-        return true;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return Objects.equals(username, person.username) && Objects.equals(password, person.password) && Objects.equals(email, person.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username, password, email);
     }
 }

@@ -42,6 +42,7 @@ public class Bank {
             ps.setDouble(1, bal);
             ps.setString(2, person.getEmail());
             ps.executeUpdate();
+            ps.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -57,7 +58,11 @@ public class Bank {
                 ps.setString(1, person.getEmail());
                 ResultSet rs = ps.executeQuery();
                 if (rs.next()) {
-                    return rs.getDouble("balance");
+                    double balance = rs.getDouble("balance");
+                    rs.close();
+                    ps.close();
+                    return balance;
+
                 } else {
                     return 0;
                 }
@@ -91,6 +96,8 @@ public class Bank {
                     ps.setString(2, person.getEmail());
                     ps.executeUpdate();
                     System.out.println("Withdrawl successful. New balance: $" + bal);
+                    ps.close();
+                    rs.close();
                 }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
@@ -109,6 +116,8 @@ public class Bank {
                 if (rs.next()) {
                     if (rs.getString("password").equals(person.getPass())) {
                         System.out.println("Welcome back, " + person.getUser() + "!");
+                        st.close();
+                        rs.close();
                         return true;
                     }
                 } else {
@@ -125,6 +134,7 @@ public class Bank {
     public void transfer(Person from, Person to, double balance) {
         {
             try {
+
                 PreparedStatement st = con.prepareStatement("SELECT balance FROM \"Work\" WHERE email=?");
                 st.setString(1, from.getEmail());
                 ResultSet rs = st.executeQuery();
