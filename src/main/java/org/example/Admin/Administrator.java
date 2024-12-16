@@ -6,8 +6,6 @@ import org.example.DB.DBCon;
 import java.sql.*;
 
 public class Administrator extends Person {
-    private String email;
-    private String password;
     private DBCon DB = new DBCon();
     private Connection con;
 
@@ -20,12 +18,11 @@ public class Administrator extends Person {
     }
 
     public Administrator() {
-        this.email = "admin@root.com";
-        this.password = "admin";
+        super("", "admin", "admin@root.com");
     }
 
     public boolean authAdmin(String email, String pass) {
-        return (email.equals(this.email) && pass.equals(this.password));
+        return (email.equals(this.getEmail()) && pass.equals(this.getPass()));
     }
 
     public void getBankBalance() {
@@ -43,6 +40,21 @@ public class Administrator extends Person {
 
             } catch (SQLException e) {
                 throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public void removeUser(String email, String password) {
+        {
+            try {
+                PreparedStatement st = con.prepareStatement("DELETE FROM \"Work\" WHERE email=? AND password=?");
+                st.setString(1, email);
+                st.setString(2, password);
+                st.executeUpdate();
+                st.close();
+                System.out.println("Account successfully removed!");
+            } catch (SQLException e) {
+                System.out.println("Unable to locate account.");
             }
         }
     }

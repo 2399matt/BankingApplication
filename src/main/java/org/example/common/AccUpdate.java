@@ -37,5 +37,20 @@ public class AccUpdate {
         }
     }
 
+    public void updatePassword(Person person, String password) {
+        {
+            try {
+                PreparedStatement st = con.prepareStatement("UPDATE \"Work\" SET password=? WHERE email=?");
+                st.setString(1, password);
+                st.setString(2, person.getEmail());
+                st.executeUpdate();
+                st.close();
+                System.out.println("Password successfully updated! ");
+            } catch (SQLException e) {
+                System.out.println("Unable to locate account.");
+            }
+        }
+    }
+
 
 }

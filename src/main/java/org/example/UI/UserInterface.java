@@ -84,7 +84,7 @@ public class UserInterface {
 
     public void bankDetails(Scanner scanner, Person person) {
         while (true) {
-            System.out.println("[1] Deposit\n[2] Withdrawal\n[3] Check balance\n[4] Transfer\n[5] Update Email\n[6] Logout");
+            System.out.println("[1] Deposit\n[2] Withdrawal\n[3] Check balance\n[4] Transfer\n[5] Update Email\n[6] Update password\n[7] Logout");
             int input = Integer.parseInt(scanner.nextLine());
             if (input == 1) {
                 System.out.println("How much to deposit? ");
@@ -108,18 +108,29 @@ public class UserInterface {
                 AccUpdate update = new AccUpdate();
                 System.out.println("Confirm current email address:");
                 String currEmail = scanner.nextLine();
-                while(!currEmail.equals(person.getEmail())){
+                while (!currEmail.equals(person.getEmail())) {
                     System.out.println("Email does not match email on file. Please try again: ");
                     currEmail = scanner.nextLine();
                 }
                 System.out.println("Enter new email address:");
                 String newEmail = scanner.nextLine();
-                while(!newEmail.contains("@")){
+                while (!newEmail.contains("@")) {
                     System.out.println("Enter new email address:");
                     newEmail = scanner.nextLine();
                 }
                 update.updateEmail(person, newEmail);
             } else if (input == 6) {
+                AccUpdate update = new AccUpdate();
+                System.out.println("Please confirm your current password: ");
+                String password = scanner.nextLine();
+                while (!password.equals(person.getPass())) {
+                    System.out.println("Please confirm your current password: ");
+                    password = scanner.nextLine();
+                }
+                System.out.println("Please enter desired password: ");
+                String newPass = scanner.nextLine();
+                update.updatePassword(person, newPass);
+            } else if (input == 7) {
                 start(scanner);
             } else {
                 System.out.println("Invalid command.");
@@ -129,12 +140,20 @@ public class UserInterface {
 
     public void adminDetails(Scanner scanner) {
         while (true) {
-            System.out.println("[1] Check current bank holdings\n[2] Logout");
+            System.out.println("[1] Check current bank holdings\n[2] Remove a user\n[3] Logout");
             int input = Integer.parseInt(scanner.nextLine());
             if (input == 1) {
                 admin.getBankBalance();
             } else if (input == 2) {
+                System.out.println("Enter email of account to be removed");
+                String email = scanner.nextLine();
+                System.out.println("Enter password of account to be removed: ");
+                String pass = scanner.nextLine();
+                admin.removeUser(email, pass);
+            } else if (input == 3) {
                 start(scanner);
+            } else {
+                System.out.println("Invalid command.");
             }
         }
     }

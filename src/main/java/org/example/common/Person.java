@@ -14,8 +14,8 @@ public class Person {
     private String password;
     private String email;
     private Bank bank;
-    private DBCon DB = new DBCon();
-    private Connection con;
+    private final DBCon DB = new DBCon();
+    private final Connection con;
 
     {
         try {
