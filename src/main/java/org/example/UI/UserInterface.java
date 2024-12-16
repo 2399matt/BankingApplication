@@ -84,7 +84,7 @@ public class UserInterface {
 
     public void bankDetails(Scanner scanner, Person person) {
         while (true) {
-            System.out.println("[1] Deposit\n[2] Withdrawal\n[3] Check balance\n[4] Transfer\n[5] Update Email\n[6] Update password\n[7] Logout");
+            System.out.println("[1] Deposit\n[2] Withdrawal\n[3] Check balance\n[4] Transfer\n[5] Update Email\n[6] Update password\n[7] Request account deletion\n[8] Logout");
             int input = Integer.parseInt(scanner.nextLine());
             if (input == 1) {
                 System.out.println("How much to deposit? ");
@@ -131,6 +131,9 @@ public class UserInterface {
                 String newPass = scanner.nextLine();
                 update.updatePassword(person, newPass);
             } else if (input == 7) {
+                AccUpdate update = new AccUpdate();
+                update.addUserForRemoval(person);
+            } else if (input == 8) {
                 start(scanner);
             } else {
                 System.out.println("Invalid command.");
@@ -140,7 +143,7 @@ public class UserInterface {
 
     public void adminDetails(Scanner scanner) {
         while (true) {
-            System.out.println("[1] Check current bank holdings\n[2] Remove a user\n[3] Logout");
+            System.out.println("[1] Check current bank holdings\n[2] Remove a user\n[3] View deletion requests\n[4] Fulfill account deletion requests\n[5] Logout");
             int input = Integer.parseInt(scanner.nextLine());
             if (input == 1) {
                 admin.getBankBalance();
@@ -151,6 +154,10 @@ public class UserInterface {
                 String pass = scanner.nextLine();
                 admin.removeUser(email, pass);
             } else if (input == 3) {
+                System.out.println(admin.getUsersToRemove());
+            } else if (input == 4) {
+                admin.fulfillDeletionRequests();
+            } else if (input == 5) {
                 start(scanner);
             } else {
                 System.out.println("Invalid command.");

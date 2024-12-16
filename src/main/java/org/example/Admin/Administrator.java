@@ -2,12 +2,14 @@ package org.example.Admin;
 
 import org.example.common.Person;
 import org.example.DB.DBCon;
+import java.util.LinkedList;
+import java.util.List;
 
 import java.sql.*;
 
 public class Administrator extends Person {
-    private DBCon DB = new DBCon();
-    private Connection con;
+    private final DBCon DB = new DBCon();
+    private final Connection con;
 
     {
         try {
@@ -55,6 +57,39 @@ public class Administrator extends Person {
                 System.out.println("Account successfully removed!");
             } catch (SQLException e) {
                 System.out.println("Unable to locate account.");
+            }
+        }
+    }
+    public String getUsersToRemove(){
+        List<Person> list = new LinkedList<>();
+        {
+            try{
+                PreparedStatement st = con.prepareStatement("SELECT * FROM \"Work\" WHERE remove=?");
+                st.setInt(1,1);
+                ResultSet rs = st.executeQuery();
+                while(rs.next()){
+                    String username = rs.getString("username");
+                    String pass = rs.getString("password");
+                    String email = rs.getString("email");
+                    Person person = new Person(username,pass,email);
+                    list.add(person);
+                }
+            }catch(SQLException e){
+                throw new RuntimeException(e);
+            }
+        }
+        return list.toString();
+    }
+    public void fulfillDeletionRequests(){
+        {
+            try{
+                PreparedStatement st = con.prepareStatement("DELETE FROM \"Work\" WHERE remove=?");
+                st.setInt(1,1);
+                st.executeUpdate();
+                st.close();
+                System.out.println("Accounts removed.");
+            }catch(SQLException e){
+                throw new RuntimeException(e);
             }
         }
     }

@@ -51,6 +51,21 @@ public class AccUpdate {
             }
         }
     }
+    public void addUserForRemoval(Person person){
+        {
+            try{
+                PreparedStatement st = con.prepareStatement("UPDATE \"Work\" SET remove=? WHERE email=? AND password=?");
+                st.setInt(1,1);
+                st.setString(2, person.getEmail());
+                st.setString(3, person.getPass());
+                st.executeUpdate();
+                st.close();
+                System.out.println("Request sent!");
+            }catch(SQLException e){
+                System.out.println("Unable to locate account.");
+            }
+        }
+    }
 
 
 }

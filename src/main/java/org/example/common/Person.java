@@ -6,7 +6,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class Person {
@@ -32,7 +31,6 @@ public class Person {
         this.username = newUser;
         this.password = newPass;
         this.email = newEmail;
-
     }
 
     public void addPerson(Person person, double balance) throws SQLException {
@@ -115,4 +113,10 @@ public class Person {
     public int hashCode() {
         return Objects.hash(username, password, email);
     }
+
+    @Override
+    public String toString() {
+        return String.format("Name: %s Password: %s Email: %s", this.username, this.password, this.email);
+    }
+
 }
